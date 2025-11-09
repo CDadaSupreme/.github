@@ -1,0 +1,14 @@
+name: Preprod Simple
+on:
+  workflow_call:
+    inputs:
+      repo_kind:
+        required: true
+        type: string
+
+jobs:
+  preprod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo repo kind
+        run: echo "Repo kind is ${{ inputs.repo_kind }}"
