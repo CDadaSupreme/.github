@@ -1,4 +1,4 @@
-name: Preprod Reusable
+﻿name: Preprod Reusable
 on:
   workflow_call:
     inputs:
@@ -37,12 +37,12 @@ jobs:
     runs-on: ${{ inputs.repo_kind == 'web' && 'ubuntu-latest' || 'windows-latest' }}
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node_version }}
           cache: pnpm
-      - uses: pnpm/action-setup@v4
-        with: { version: 9 }
       - run: pnpm install --frozen-lockfile
       - name: Write .env.preprod
         shell: pwsh
