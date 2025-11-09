@@ -5,7 +5,7 @@ on:
       repo_kind:
         required: true
         type: string
-        default: api   # api|web|worker
+        default: api
       strict_health:
         required: false
         type: boolean
