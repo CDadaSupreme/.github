@@ -14,17 +14,6 @@ on:
         required: false
         type: string
         default: '20'
-    secrets:
-      PREPROD_DATABASE_URL:
-        required: false
-      PREPROD_REDIS_URL:
-        required: false
-      PREPROD_JWT_SECRET:
-        required: false
-      PREPROD_SESSION_SECRET:
-        required: false
-      PREPROD_NEXT_PUBLIC_API_URL:
-        required: false
 
 jobs:
   preprod:
