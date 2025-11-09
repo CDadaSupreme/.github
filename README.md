@@ -23,12 +23,7 @@ jobs:
       repo_kind: 'api'  # or 'web', 'worker'
       strict_health: false
       node_version: '20'
-    secrets:
-      PREPROD_DATABASE_URL: ${{ secrets.PREPROD_DATABASE_URL }}
-      PREPROD_REDIS_URL: ${{ secrets.PREPROD_REDIS_URL }}
-      PREPROD_JWT_SECRET: ${{ secrets.PREPROD_JWT_SECRET }}
-      PREPROD_SESSION_SECRET: ${{ secrets.PREPROD_SESSION_SECRET }}
-      PREPROD_NEXT_PUBLIC_API_URL: ${{ secrets.PREPROD_NEXT_PUBLIC_API_URL }}
+    secrets: inherit
 ```
 
 **Parameters:**
