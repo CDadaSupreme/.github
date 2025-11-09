@@ -1,4 +1,4 @@
-﻿name: Preprod Reusable
+name: Preprod Reusable
 on:
   workflow_call:
     inputs:
@@ -60,7 +60,7 @@ jobs:
         shell: pwsh
         run: >
           powershell -ExecutionPolicy Bypass -File .\scripts\hardened-preprod-test.ps1
-          -StrictHealth:${{ inputs.strict_health }}
+          ${{ inputs.strict_health && '-StrictHealth' || '' }}
           -ApiUrl "${{ secrets.PREPROD_NEXT_PUBLIC_API_URL || 'http://localhost:5000' }}"
       - name: Upload preprod logs
         if: always()
@@ -76,3 +76,4 @@ jobs:
           name: preprod-summary
           path: logs/**/preprod-summary*.json
           if-no-files-found: warn
+
