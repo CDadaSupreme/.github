@@ -1,0 +1,61 @@
+name: Preprod Reusable
+on:
+  workflow_call:
+    inputs:
+      repo_kind:
+        required: true
+        type: string
+        default: api   # api|web|worker
+      strict_health:
+        required: false
+        type: boolean
+        default: false
+      node_version:
+        required: false
+        type: string
+        default: '20'
+    secrets:
+      PREPROD_DATABASE_URL:
+        required: false
+      PREPROD_REDIS_URL:
+        required: false
+      PREPROD_JWT_SECRET:
+        required: false
+      PREPROD_SESSION_SECRET:
+        required: false
+      PREPROD_NEXT_PUBLIC_API_URL:
+        required: false
+
+jobs:
+  preprod:
+    runs-on: ${{ inputs.repo_kind == 'web' && 'ubuntu-latest' || 'windows-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: ${{ inputs.node_version }}, cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+      - name: Write .env.preprod
+        shell: pwsh
+        run: |
+          @"
+          NODE_ENV=production
+          REPO_KIND=${{ inputs.repo_kind }}
+          NEXT_PUBLIC_API_URL=${{ secrets.PREPROD_NEXT_PUBLIC_API_URL }}
+          DATABASE_URL=${{ secrets.PREPROD_DATABASE_URL }}
+          JWT_SECRET=${{ secrets.PREPROD_JWT_SECRET }}
+          SESSION_SECRET=${{ secrets.PREPROD_SESSION_SECRET }}
+          REDIS_URL=${{ secrets.PREPROD_REDIS_URL }}
+          QUEUE_PREFIX=kanovi-preprod
+          "@ | Set-Content .env.preprod
+      - name: Run hardened suite
+        shell: pwsh
+        run: ./scripts/hardened-preprod-test.ps1 -StrictHealth:${{ inputs.strict_health }} -ApiUrl "${{ secrets.PREPROD_NEXT_PUBLIC_API_URL || 'http://localhost:5000' }}"
+      - name: Upload preprod logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: preprod-logs-${{ github.run_id }}
+          path: logs/**/*.log
+          if-no-files-found: warn
