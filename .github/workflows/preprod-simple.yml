@@ -5,6 +5,9 @@ on:
       repo_kind:
         required: true
         type: string
+    secrets:
+      PREPROD_DATABASE_URL:
+        required: false
 
 jobs:
   preprod:
@@ -12,3 +15,5 @@ jobs:
     steps:
       - name: Echo repo kind
         run: echo "Repo kind is ${{ inputs.repo_kind }}"
+      - name: Test secret
+        run: echo "Secret is set: ${{ secrets.PREPROD_DATABASE_URL != '' }}"
